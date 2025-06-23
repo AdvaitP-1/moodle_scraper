@@ -1,36 +1,22 @@
 import { ElementHandle } from 'puppeteer';
 import { Assignment, Grade, MoodleFile, ZybookIntegration } from '../types';
 
-/**
- * Generic extraction functions for different Moodle data types
- * These can be customized based on specific Moodle site configurations
- */
-
-/**
- * Extract assignment data from a DOM element
- * @param element - The DOM element containing assignment information
- * @returns Assignment object or null if extraction fails
- */
 export async function extractAssignment(element: ElementHandle): Promise<Assignment | null> {
   try {
     const data = await element.evaluate((el: Element) => {
-      // Look for assignment title and link
       const titleElement = el.querySelector('.instancename, .activity-name, h3, .assignment-title');
       const linkElement = el.querySelector('a[href*="assign"]') || el;
       
-      // Extract basic information
       const title = titleElement?.textContent?.trim() || 'Unknown Assignment';
       const url = (linkElement as HTMLAnchorElement)?.href || '';
       const id = url.match(/id=(\d+)/)?.[1] || Math.random().toString();
       
-      // Look for due date
       const dueDateElement = el.querySelector('.due-date, .duedate, .assignment-due, [class*="due"]');
       let dueDate: string | null = null;
       
       if (dueDateElement) {
         const dueDateText = dueDateElement.textContent?.trim();
         if (dueDateText) {
-          // Try different date patterns
           const datePattern = dueDateText.match(/(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/);
           if (datePattern) {
             const parsed = new Date(datePattern[1]);
@@ -41,7 +27,6 @@ export async function extractAssignment(element: ElementHandle): Promise<Assignm
         }
       }
       
-      // Check submission status
       const statusElement = el.querySelector('.status, .submission-status, [class*="status"]');
       let submissionStatus: 'submitted' | 'not_submitted' | 'late' = 'not_submitted';
       
@@ -54,11 +39,9 @@ export async function extractAssignment(element: ElementHandle): Promise<Assignm
         }
       }
       
-      // Look for description
       const descElement = el.querySelector('.assignment-description, .description, .summary');
       const description = descElement?.textContent?.trim() || '';
       
-      // Look for grade information
       const gradeElement = el.querySelector('.grade, .points, .score');
       let currentGrade: number | null = null;
       let maxGrade = 0;
@@ -95,26 +78,18 @@ export async function extractAssignment(element: ElementHandle): Promise<Assignm
   }
 }
 
-/**
- * Extract grade data from a DOM element
- * @param element - The DOM element containing grade information
- * @returns Grade object or null if extraction fails
- */
 export async function extractGrade(element: ElementHandle): Promise<Grade | null> {
   try {
     const data = await element.evaluate((el: Element) => {
-      // Look for grade item name
       const itemNameElement = el.querySelector('.gradeitemheader, .item-name, .gradeitem, td:first-child');
       const itemName = itemNameElement?.textContent?.trim() || null;
       
-      // Extract grade values
       const gradeElement = el.querySelector('.grade, .points, .percentage, .finalgrade');
       const maxGradeElement = el.querySelector('.max-grade, .total-points, .out-of');
       
       const gradeText = gradeElement?.textContent?.trim() || '0';
       const maxGradeText = maxGradeElement?.textContent?.trim() || '0';
       
-      // Calculate percentage
       const gradeMatch = gradeText.match(/(\d+\.?\d*)/);
       const maxGradeMatch = maxGradeText.match(/(\d+\.?\d*)/);
       
@@ -122,11 +97,9 @@ export async function extractGrade(element: ElementHandle): Promise<Grade | null
       const maxGradeValue = maxGradeMatch ? parseFloat(maxGradeMatch[1]) : 100;
       const percentage = maxGradeValue > 0 ? (gradeValue / maxGradeValue) * 100 : 0;
       
-      // Look for feedback
       const feedbackElement = el.querySelector('.feedback, .comment, .grade-feedback');
       const feedback = feedbackElement?.textContent?.trim() || null;
       
-      // Look for date modified
       const dateElement = el.querySelector('.date-modified, .last-modified, .timestamp, .grade-date');
       let dateModified: string | null = null;
       
@@ -161,31 +134,22 @@ export async function extractGrade(element: ElementHandle): Promise<Grade | null
   }
 }
 
-/**
- * Extract file data from a DOM element
- * @param element - The DOM element containing file information
- * @returns MoodleFile object or null if extraction fails
- */
 export async function extractFile(element: ElementHandle): Promise<MoodleFile | null> {
   try {
     const data = await element.evaluate((el: Element) => {
-      // Look for file name and link
       const nameElement = el.querySelector('.instancename, .resource-name, .filename, .fp-filename');
       const linkElement = el.querySelector('a[href*="resource"], a[href*="pluginfile"], a[href*="folder"]') || el;
       
       const name = nameElement?.textContent?.trim() || 'Unknown File';
       const url = (linkElement as HTMLAnchorElement)?.href || '';
       
-      // Look for file size
       const sizeElement = el.querySelector('.filesize, .file-size, .size');
       const size = sizeElement?.textContent?.trim() || 'Unknown size';
       
-      // Determine file type
       const typeElement = el.querySelector('.filetype, .file-type, .mimetype');
       let type = typeElement?.textContent?.trim() || '';
       
       if (!type && url) {
-        // Determine from URL extension
         const urlParts = url.split('.');
         const extension = urlParts.length > 1 ? urlParts.pop()?.toLowerCase() : '';
         type = extension || 'unknown';
@@ -195,7 +159,6 @@ export async function extractFile(element: ElementHandle): Promise<MoodleFile | 
         type = 'unknown';
       }
       
-      // Look for icon to determine type if still unknown
       if (!type || type === 'unknown') {
         const iconElement = el.querySelector('.iconlarge, .activityicon, .icon, img');
         if (iconElement) {
@@ -217,7 +180,7 @@ export async function extractFile(element: ElementHandle): Promise<MoodleFile | 
         url,
         size,
         type: type || 'unknown',
-        downloadUrl: url // In most cases, the view URL is also the download URL
+        downloadUrl: url
       };
     });
     
@@ -229,22 +192,15 @@ export async function extractFile(element: ElementHandle): Promise<MoodleFile | 
   }
 }
 
-/**
- * Extract Zybook integration data from a DOM element
- * @param element - The DOM element containing Zybook information
- * @returns ZybookIntegration object or null if extraction fails
- */
 export async function extractZybookIntegration(element: ElementHandle): Promise<ZybookIntegration | null> {
   try {
     const data = await element.evaluate((el: Element) => {
-      // Look for title and link
       const titleElement = el.querySelector('.instancename, .activity-name, .lti-title, .external-tool-title');
       const linkElement = el.querySelector('a[href*="zybook"], a[href*="lti"], a[href*="external"]') || el;
       
       const title = titleElement?.textContent?.trim() || '';
       const url = (linkElement as HTMLAnchorElement)?.href || '';
       
-      // Look for due date
       const dueDateElement = el.querySelector('.due-date, .duedate, [class*="due"]');
       let dueDate: string | null = null;
       
@@ -261,7 +217,6 @@ export async function extractZybookIntegration(element: ElementHandle): Promise<
         }
       }
       
-      // Look for completion status
       const statusElement = el.querySelector('.status, .completion-status, .completion-manual, .completion-auto');
       let completionStatus = 'Not started';
       
@@ -276,7 +231,6 @@ export async function extractZybookIntegration(element: ElementHandle): Promise<
         }
       }
       
-      // Look for progress percentage
       const progressElement = el.querySelector('.progress, .completion-progress, [class*="progress"]');
       let progress: number | null = null;
       
@@ -289,7 +243,6 @@ export async function extractZybookIntegration(element: ElementHandle): Promise<
           }
         }
         
-        // Also check for progress bar width
         const progressBar = progressElement.querySelector('.progress-bar, .bar');
         if (progressBar && progress === null) {
           const style = (progressBar as HTMLElement).style;
@@ -323,33 +276,22 @@ export async function extractZybookIntegration(element: ElementHandle): Promise<
   }
 }
 
-/**
- * Helper function to clean and normalize text
- * @param text - Raw text to clean
- * @returns Cleaned text
- */
 export function cleanText(text: string): string {
   return text
-    .replace(/\s+/g, ' ')  // Replace multiple whitespace with single space
-    .replace(/^\s+|\s+$/g, '')  // Trim start and end
-    .replace(/\n/g, ' ')  // Replace newlines with spaces
+    .replace(/\s+/g, ' ')
+    .replace(/^\s+|\s+$/g, '')
+    .replace(/\n/g, ' ')
     .trim();
 }
 
-/**
- * Helper function to parse dates from various formats
- * @param dateText - Date text to parse
- * @returns Date object or null if parsing fails
- */
 export function parseDate(dateText: string): Date | null {
   if (!dateText) return null;
   
-  // Try different date patterns
   const patterns = [
-    /(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/,  // MM/DD/YYYY or MM-DD-YYYY
-    /(\w+ \d{1,2}, \d{4})/,  // Month DD, YYYY
-    /(\d{4}-\d{2}-\d{2})/,   // YYYY-MM-DD
-    /(\d{1,2} \w+ \d{4})/    // DD Month YYYY
+    /(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/,
+    /(\w+ \d{1,2}, \d{4})/,
+    /(\d{4}-\d{2}-\d{2})/,
+    /(\d{1,2} \w+ \d{4})/
   ];
   
   for (const pattern of patterns) {

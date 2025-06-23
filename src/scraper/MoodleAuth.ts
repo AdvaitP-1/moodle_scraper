@@ -1,10 +1,6 @@
 import { Page } from 'puppeteer';
 import { MoodleCredentials } from '../types';
 
-/**
- * Advanced Moodle authentication handler
- * Inspired by patterns from existing GitHub repositories
- */
 export class MoodleAuth {
   private page: Page;
   private credentials: MoodleCredentials;
@@ -16,9 +12,6 @@ export class MoodleAuth {
     this.credentials = credentials;
   }
 
-  /**
-   * Intelligent login that handles various Moodle configurations
-   */
   async login(): Promise<boolean> {
     try {
       // First try to navigate to the class URL to detect login redirect
@@ -49,9 +42,6 @@ export class MoodleAuth {
     }
   }
 
-  /**
-   * Check if user is already authenticated
-   */
   private async isAlreadyLoggedIn(): Promise<boolean> {
     try {
       const loginIndicators = [
@@ -91,9 +81,6 @@ export class MoodleAuth {
     }
   }
 
-  /**
-   * Detect login URL from common Moodle paths
-   */
   private async findLoginUrl(): Promise<string> {
     const currentUrl = this.page.url();
     const baseUrl = new URL(currentUrl).origin;
@@ -141,9 +128,6 @@ export class MoodleAuth {
     return currentUrl; // Fallback to current URL
   }
 
-  /**
-   * Extract CSRF token from login form
-   */
   private async extractCSRFToken(): Promise<string | null> {
     try {
       const tokenSelectors = [
@@ -171,11 +155,7 @@ export class MoodleAuth {
     }
   }
 
-  /**
-   * Perform the actual login with multiple fallback strategies
-   */
   private async performLogin(csrfToken: string | null): Promise<void> {
-    // Find username field with multiple selectors
     const usernameSelector = await this.findUsernameField();
     const passwordSelector = await this.findPasswordField();
     const submitSelector = await this.findSubmitButton();
@@ -184,14 +164,12 @@ export class MoodleAuth {
       throw new Error('Could not locate all required login form elements');
     }
 
-    // Clear and fill form fields
-    await this.page.click(usernameSelector, { clickCount: 3 }); // Select all
+    await this.page.click(usernameSelector, { clickCount: 3 });
     await this.page.type(usernameSelector, this.credentials.email);
     
-    await this.page.click(passwordSelector, { clickCount: 3 }); // Select all  
+    await this.page.click(passwordSelector, { clickCount: 3 });
     await this.page.type(passwordSelector, this.credentials.password);
 
-    // If CSRF token exists, ensure it's set
     if (csrfToken) {
       const tokenField = await this.page.$('input[name="logintoken"], input[name="_token"]');
       if (tokenField) {

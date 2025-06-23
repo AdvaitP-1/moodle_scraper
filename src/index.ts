@@ -28,7 +28,5 @@ export async function scrapeMoodle(
   }
 }
 
-
-
 // Default export
 export default MoodleScraper; 

@@ -1,10 +1,6 @@
 import { Page } from 'puppeteer';
 import { Course, Assignment, Grade, MoodleFile, ZybookIntegration, MoodleCredentials } from '../types';
 
-/**
- * Enhanced Moodle API interaction class
- * Inspired by successful patterns from GitHub repositories
- */
 export class MoodleApi {
   private page: Page;
   private credentials: MoodleCredentials;
@@ -15,9 +11,6 @@ export class MoodleApi {
     this.credentials = credentials;
   }
 
-  /**
-   * Discover all available courses for the authenticated user
-   */
   async discoverCourses(): Promise<Course[]> {
     const courses: Course[] = [];
 
@@ -53,9 +46,6 @@ export class MoodleApi {
     return courses;
   }
 
-  /**
-   * Extract assignments from current course page
-   */
   async extractAssignments(): Promise<Assignment[]> {
     const assignments: Assignment[] = [];
 
@@ -93,9 +83,6 @@ export class MoodleApi {
     return assignments;
   }
 
-  /**
-   * Extract detailed assignment information
-   */
   private async extractAssignmentDetails(element: any): Promise<Assignment | null> {
     try {
       const data = await element.evaluate((el: Element) => {
@@ -191,9 +178,6 @@ export class MoodleApi {
     }
   }
 
-  /**
-   * Extract grades from gradebook
-   */
   async extractGrades(): Promise<Grade[]> {
     const grades: Grade[] = [];
 

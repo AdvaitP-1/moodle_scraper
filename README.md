@@ -16,7 +16,7 @@ A powerful Node.js package to scrape Moodle LMS data including assignments, grad
 ## 📦 Installation
 
 ```bash
-npm install moodle-scraper
+npm install moodleScrapper
 ```
 
 ## 🛠️ Quick Start
@@ -24,7 +24,7 @@ npm install moodle-scraper
 ### Basic Usage
 
 ```javascript
-const { scrapeMoodle } = require('moodle-scraper');
+const { scrapeMoodle } = require('moodleScrapper');
 
 async function getMoodleData() {
   const credentials = {
@@ -51,7 +51,7 @@ getMoodleData();
 ### Advanced Usage
 
 ```javascript
-const { MoodleScraper } = require('moodle-scraper');
+const { MoodleScraper } = require('moodleScrapper');
 
 async function advancedScraping() {
   const scraper = new MoodleScraper({

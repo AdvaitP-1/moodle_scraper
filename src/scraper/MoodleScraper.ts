@@ -34,7 +34,6 @@ export class MoodleScraper {
     this.page = await this.browser.newPage();
     await this.page.setViewport({ width: 1366, height: 768 });
     
-    // Set a reasonable timeout
     this.page.setDefaultTimeout(this.options.timeout!);
   }
 
@@ -42,13 +41,10 @@ export class MoodleScraper {
     if (!this.page) throw new Error('Browser not initialized');
 
     try {
-      // Navigate to the class URL first to determine the Moodle login page
       await this.page.goto(this.credentials.classUrl, { waitUntil: 'networkidle0' });
       
-      // Check if we're redirected to a login page
       const currentUrl = this.page.url();
       
-      // Look for login form elements
       const emailSelector = await this.findLoginSelector();
       const passwordSelector = await this.findPasswordSelector();
       
@@ -56,18 +52,15 @@ export class MoodleScraper {
         throw new Error('Could not find login form elements');
       }
 
-      // Fill login form
       await this.page.type(emailSelector, this.credentials.email);
       await this.page.type(passwordSelector, this.credentials.password);
       
-      // Find and click login button
       const loginButton = await this.findLoginButton();
       await Promise.all([
         this.page.waitForNavigation({ waitUntil: 'networkidle0' }),
         this.page.click(loginButton)
       ]);
 
-      // Verify login success
       await this.verifyLogin();
       return true;
       
@@ -129,10 +122,8 @@ export class MoodleScraper {
   }
 
   private async verifyLogin(): Promise<void> {
-    // Wait a bit for redirect
     await this.page!.waitForTimeout(2000);
     
-    // Check if we're still on a login page or if login failed
     const currentUrl = this.page!.url();
     const pageContent = await this.page!.content();
     
@@ -148,7 +139,6 @@ export class MoodleScraper {
     
     await this.page.goto(this.credentials.classUrl, { waitUntil: 'networkidle0' });
     
-    // Wait for the course page to load
     await this.page.waitForSelector('.course-content, .main-course-page, #page-content', {
       timeout: 10000
     }).catch(() => {
@@ -162,7 +152,6 @@ export class MoodleScraper {
     const assignments: Assignment[] = [];
     
     try {
-      // Look for assignment links and sections
       const assignmentElements = await this.page.$$('a[href*="assign"], a[href*="assignment"], .activity.assign');
       
       for (const element of assignmentElements) {
@@ -187,14 +176,12 @@ export class MoodleScraper {
     const grades: Grade[] = [];
     
     try {
-      // Try to find gradebook or grades link
       const gradesLink = await this.page.$('a[href*="grade"], a:contains("Grade"), a:contains("Gradebook")');
       
       if (gradesLink) {
         await gradesLink.click();
         await this.page.waitForNavigation({ waitUntil: 'networkidle0' });
         
-        // Extract grades from the gradebook page
         const gradeRows = await this.page.$$('tr.graderow, .gradestable tr');
         
         for (const row of gradeRows) {
@@ -220,7 +207,6 @@ export class MoodleScraper {
     const files: MoodleFile[] = [];
     
     try {
-      // Look for file resources and folders
       const fileElements = await this.page.$$('a[href*="resource"], a[href*="folder"], .activity.resource');
       
       for (const element of fileElements) {
@@ -245,7 +231,6 @@ export class MoodleScraper {
     const zybookIntegrations: ZybookIntegration[] = [];
     
     try {
-      // Look for Zybook links or external tool integrations
       const zybookElements = await this.page.$$('a[href*="zybook"], a[href*="zybooks"], .activity.lti');
       
       for (const element of zybookElements) {
@@ -294,17 +279,12 @@ export class MoodleScraper {
     }
   }
 
-  /**
-   * Check if the current session is still valid
-   * Inspired by dotnize/moodle-scrape session management
-   */
   async isSessionValid(): Promise<boolean> {
     if (!this.page) return false;
     
     try {
       await this.page.goto(this.credentials.classUrl, { waitUntil: 'networkidle0' });
       
-      // Check for login indicators
       const loginIndicators = [
         'input[name="username"]',
         'input[name="password"]',
@@ -314,16 +294,15 @@ export class MoodleScraper {
 
       for (const selector of loginIndicators) {
         const element = await this.page.$(selector);
-        if (element) return false; // Found login form, session expired
+        if (element) return false;
       }
 
-      return true; // No login form found, session likely valid
+      return true;
     } catch (error) {
       return false;
     }
   }
 
-  // Helper methods for data extraction
   private async extractAssignmentData(element: ElementHandle): Promise<Assignment | null> {
     try {
       const data = await element.evaluate((el: Element) => {
