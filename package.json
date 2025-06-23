@@ -1,6 +1,6 @@
 {
-  "name": "moodlescrapper",
-  "version": "1.0.0",
+  "name": "moodletracer",
+  "version": "1.0.1",
   "description": "A powerful Node.js package to scrape Moodle LMS data including assignments, grades, files, and Zybook integrations",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

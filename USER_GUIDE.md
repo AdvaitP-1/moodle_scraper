@@ -6,7 +6,7 @@ A complete guide for users to install, configure, and use the Moodle Scraper pac
 
 ### Option 1: From npm (Recommended)
 ```bash
-npm install moodleScrapper
+npm install moodletracer
 ```
 
 ### Option 2: From GitHub (Development)
@@ -30,7 +30,7 @@ npm link  # Makes it available globally
 Create a file called `my-scraper.js`:
 
 ```javascript
-const { scrapeMoodle } = require('moodleScrapper');
+const { scrapeMoodle } = require('moodletracer');
 
 async function scrapeMoodleData() {
   // Your Moodle credentials
@@ -84,7 +84,7 @@ node my-scraper.js
 ### 2. Advanced Usage with Class Instance
 
 ```javascript
-const { MoodleScraper } = require('moodleScrapper');
+const { MoodleScraper } = require('moodletracer');
 
 async function advancedScraping() {
   const scraper = new MoodleScraper({
@@ -136,7 +136,7 @@ advancedScraping();
 If your Moodle uses 2FA:
 
 ```javascript
-const { MoodleScraper } = require('moodleScrapper');
+const { MoodleScraper } = require('moodletracer');
 
 async function scrapeWith2FA() {
   const scraper = new MoodleScraper({
@@ -384,7 +384,7 @@ your-project/
 ### 1. Save Data to JSON Files
 ```javascript
 const fs = require('fs');
-const { scrapeMoodle } = require('moodleScrapper');
+const { scrapeMoodle } = require('moodletracer');
 
 async function saveScrapedData() {
   const data = await scrapeMoodle({
@@ -410,7 +410,7 @@ async function saveScrapedData() {
 
 ### 2. Multiple Classes
 ```javascript
-const { MoodleScraper } = require('moodleScrapper');
+const { MoodleScraper } = require('moodletracer');
 
 async function scrapeMultipleClasses() {
   const credentials = {
@@ -454,7 +454,7 @@ async function scrapeMultipleClasses() {
 ### 3. Scheduled Scraping
 ```javascript
 const cron = require('node-cron');
-const { scrapeMoodle } = require('moodleScrapper');
+const { scrapeMoodle } = require('moodletracer');
 
 // Run every day at 8 AM
 cron.schedule('0 8 * * *', async () => {
@@ -494,7 +494,7 @@ cron.schedule('0 8 * * *', async () => {
 
 ```bash
 # Install
-npm install moodleScrapper
+npm install moodletracer
 
 # Basic usage
 node my-scraper.js

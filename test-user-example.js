@@ -192,13 +192,13 @@ docFiles.forEach(file => {
 console.log('\n🎉 End User Testing Complete!');
 console.log('===============================');
 console.log('✅ Package is ready for end users');
-console.log('📦 Users can install with: npm install moodleScrapper');
+console.log('📦 Users can install with: npm install moodletracer');
 console.log('📚 Users can follow USER_GUIDE.md for complete instructions');
 console.log('🐳 Container support available with Red Hat technologies');
 console.log('🔐 2FA and enterprise features included');
 console.log('\n📋 Quick user onboarding:');
-console.log('1. npm install moodleScrapper');
+console.log('1. npm install moodletracer');
 console.log('2. Set environment variables or use credentials object');
-console.log('3. const { scrapeMoodle } = require("moodleScrapper")');
+console.log('3. const { scrapeMoodle } = require("moodletracer")');
 console.log('4. const data = await scrapeMoodle(credentials)');
 console.log('5. Use scraped data for assignments, grades, files, zybooks'); 
