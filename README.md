@@ -1,4 +1,4 @@
-# 🎓 Moodle Scraper
+# 🎓 Moodle Scraper(AKA Moodle Tracer)
 
 A powerful Node.js package to scrape Moodle LMS data including assignments, grades, files, and Zybook integrations.
 
