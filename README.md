@@ -101,6 +101,44 @@ await scraper.login(); // Will detect and wait for 2FA if needed
 
 See `examples/2fa-example.js` and `docs/2fa-handling-guide.md` for detailed 2FA handling strategies.
 
+## 🐳 Container Deployment (Red Hat Technologies)
+
+For production deployments, this package includes enterprise-grade containerization using Red Hat technologies:
+
+### Quick Container Usage
+
+```bash
+# Build with Red Hat Universal Base Image (UBI)
+npm run container:build
+
+# Set environment variables
+export MOODLE_EMAIL="your-email@university.edu"
+export MOODLE_PASSWORD="your-password"
+export MOODLE_CLASS_URL="https://moodle.university.edu/course/view.php?id=12345"
+
+# Run containerized scraping
+npm run container:run
+```
+
+### Enterprise Features
+
+- **🔒 Red Hat UBI**: Built on enterprise-grade Universal Base Images
+- **🛡️ Podman Ready**: Rootless, daemonless container execution
+- **⚡ Security First**: No-new-privileges, capability dropping, read-only filesystem
+- **📊 Production Ready**: Resource limits, health checks, SELinux support
+
+### Container Commands
+
+```bash
+npm run container:build    # Build container with UBI
+npm run container:run      # Run scraping in container
+npm run container:debug    # Interactive debugging container
+npm run container:info     # Show container information
+npm run container:cleanup  # Clean up containers
+```
+
+See `docs/redhat-integration.md` and `examples/podman-container-example.js` for comprehensive container usage.
+
 ## 🔧 API Reference
 
 ### `scrapeMoodle(credentials, options?)`

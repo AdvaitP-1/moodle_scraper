@@ -13,7 +13,13 @@
     "test:coverage": "jest --coverage",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "container:build": "podman build -t moodle-scraper:latest .",
+    "container:run": "node examples/podman-container-example.js run",
+    "container:debug": "node examples/podman-container-example.js debug",
+    "container:info": "node examples/podman-container-example.js info",
+    "container:cleanup": "node examples/podman-container-example.js cleanup",
+    "security:scan": "echo 'Run: podman run --rm -v $(pwd):/app:Z quay.io/redhatproductsecurity/openscap /app' && echo 'Security scanning requires OpenSCAP container'"
   },
   "keywords": [
     "moodle",
